@@ -2,10 +2,10 @@ import numpy as np
 import cv2
 import matplotlib.pyplot as plt
 from matplotlib import cm
+
 import time
 import os
 
-os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 
 # import data
 def readFile(filename):
@@ -83,7 +83,7 @@ def display(images, cnn_outs, row = 2, col = 3):
 
 
 # display all heatmap image
-def display2(images, cnn_outs, row = 2, col = 3):
+def display2(fig, ax, images, cnn_outs, row = 2, col = 3, first = True):
     img = np.zeros((28 * row, 28 * col))
     for index, (image, cnn_out) in enumerate(zip(images, cnn_outs)):
         row_index = (index // 3) * 28
@@ -93,17 +93,19 @@ def display2(images, cnn_outs, row = 2, col = 3):
     row_range = list(range(28 * row))
     col_range = list(range(28 * col))
     col_range, row_range = np.meshgrid(col_range, row_range)
-    
-    print('row_range: {}, col_range: {}, img_shape: {}'.format(row_range.shape, col_range.shape, img.shape))
-    fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
-    surf = ax.plot_surface(col_range, row_range, img, cmap=cm.coolwarm, linewidth=0, antialiased=False)
-    fig.colorbar(surf, ax = ax, shrink = 0.5, aspect = 5)
-    ax.view_init(90, 90)
-    plt.show()
-    time.sleep(1)
 
-    # cv2.imshow('image', img)
-    # cv2.waitKey(100)
+    print('row_range: {}, col_range: {}, img_shape: {}'.format(row_range.shape, col_range.shape, img.shape))
+
+    ax.clear()
+    surf = ax.plot_surface(col_range, row_range, img, cmap=cm.coolwarm, linewidth=0, antialiased=False)
+    # fig.colorbar(surf, shrink = 0.5, aspect = 5)
+    # fig.colorbar(surf, cax = cax)
+    ax.view_init(90, 90)
+
+
+def change_plot(zarray, plot):
+   plot[0].remove()
+   plot[0] = ax.plot_surface(x, y, zarray[:, :], cmap="afmhot_r")
 
 
 if __name__ == '__main__':
